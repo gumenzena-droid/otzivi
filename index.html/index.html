@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Отзывы моих клиентов</title>
+  <style>
+    :root{
+      --bg:#050312;
+      --text:#f5efe8;
+      --muted:rgba(245,239,232,.68);
+      --gold:#b99256;
+      --gold2:#d8b06c;
+      --line:rgba(185,146,86,.18);
+      --violet:rgba(40,25,72,.48);
+      --deep:#0b0818;
+      --deep2:#130d26;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,Arial,sans-serif;
+      background:
+        radial-gradient(circle at 68% 38%,rgba(58,34,103,.34),transparent 30%),
+        radial-gradient(circle at 24% 18%,rgba(15,11,34,.72),transparent 24%),
+        linear-gradient(135deg,#03020c,#080516,#04030d);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:-1;filter:blur(2px);opacity:.38}
+    .orb.one{width:260px;height:260px;right:8%;top:18%;background:radial-gradient(circle,rgba(185,146,86,.16),transparent 68%);animation:orbMove 10s ease-in-out infinite}
+    .orb.two{width:180px;height:180px;left:6%;bottom:12%;background:radial-gradient(circle,rgba(58,34,103,.28),transparent 70%);animation:orbMove 13s ease-in-out infinite reverse}
+    .wrap{width:min(1120px,calc(100% - 28px));margin:auto}
+    .nav{
+      position:sticky;top:12px;z-index:20;margin:12px auto 0;width:min(1120px,calc(100% - 28px));
+      display:flex;gap:14px;justify-content:space-between;align-items:center;padding:14px 16px;
+      border:1px solid var(--line);border-radius:22px;background:rgba(6,4,20,.72);backdrop-filter:blur(18px);
+      box-shadow:0 20px 55px rgba(0,0,0,.35)
+    }
+    .brand{font-weight:900;letter-spacing:.12em;color:var(--gold2);text-transform:uppercase}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:999px;
+      background:linear-gradient(135deg,#e0be7a,#a77f45);color:#16110a;text-decoration:none;font-weight:900;border:0;cursor:pointer;
+      box-shadow:0 10px 24px rgba(167,127,69,.22);transition:.28s;position:relative;overflow:hidden;text-align:center
+    }
+    .btn::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);transform:translateX(-140%) skewX(-18deg);transition:.65s}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(167,127,69,.34)}
+    .btn:hover::after{transform:translateX(140%) skewX(-18deg)}
+    .hero{padding:88px 0 54px;display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center}
+    .heroMain{position:relative;min-height:760px;display:flex;flex-direction:column;justify-content:center;overflow:hidden;animation:heroReveal 1.05s cubic-bezier(.2,.8,.2,1) both}
+    .heroMain::before{content:"";position:absolute;inset:8% -8% 2% 10%;background:radial-gradient(circle,rgba(65,41,110,.32),transparent 58%);z-index:0;pointer-events:none}
+    .heroMain>*{position:relative;z-index:2}
+    .heroBgPhoto{position:absolute;inset:0 -2% 0 18%;z-index:1;pointer-events:none;opacity:.28;display:flex;align-items:flex-end;justify-content:flex-end}
+    .heroBgPhoto img{width:100%;max-width:700px;height:100%;object-fit:contain;object-position:right bottom;filter:contrast(1.04) saturate(.92);animation:photoFloat 7s ease-in-out infinite}
+    h1{font-size:clamp(42px,7vw,84px);line-height:.95;letter-spacing:-.06em}
+    .lead{margin-top:20px;color:var(--muted);font-size:20px;line-height:1.55}
+    .glass{border:1px solid var(--line);border-radius:34px;background:linear-gradient(180deg,rgba(20,14,40,.72),rgba(9,7,22,.58));box-shadow:0 30px 80px rgba(0,0,0,.42);backdrop-filter:blur(18px);position:relative;overflow:hidden}
+    .glass::before{content:"";position:absolute;inset:-1px;pointer-events:none;background:linear-gradient(110deg,transparent,rgba(216,176,108,.14),transparent);transform:translateX(-120%);animation:glassShine 6s ease-in-out infinite}
+    .glass>*{position:relative;z-index:1}
+    .phone{padding:20px}
+    .mini{padding:16px;border-radius:22px;background:rgba(255,255,255,.07);border:1px solid var(--line);margin-bottom:12px;animation:miniFloat 5.5s ease-in-out infinite}
+    .mini:nth-child(2){animation-delay:.7s}.mini:nth-child(3){animation-delay:1.4s}.mini:last-child{margin-bottom:0}
+    .mini b{color:var(--gold2)}.mini p{color:var(--muted);line-height:1.5;margin-top:8px}
+    .section{padding:55px 0}
+    h2{font-size:clamp(32px,5vw,56px);letter-spacing:-.05em;margin-bottom:12px}
+    .sub{color:var(--muted);line-height:1.55;margin-bottom:24px}
+    .filters{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+    .filter{padding:11px 15px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;font-weight:800}
+    .filter.active{background:linear-gradient(135deg,#e0be7a,#a77f45);color:#16110a}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{display:grid;grid-template-columns:1fr 1fr;min-height:255px;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.07);cursor:pointer;transition:.32s cubic-bezier(.2,.8,.2,1);animation:cardIn .7s cubic-bezier(.2,.8,.2,1) both}
+    .card:hover{transform:translateY(-8px) scale(1.015);border-color:rgba(185,146,86,.65);box-shadow:0 28px 70px rgba(0,0,0,.38),0 0 36px rgba(185,146,86,.08)}
+    .media{min-height:255px;background:rgba(185,146,86,.1);display:grid;place-items:center;overflow:hidden}
+    .media img,.media video{width:100%;height:100%;object-fit:cover;transition:.55s cubic-bezier(.2,.8,.2,1)}
+    .card:hover .media img,.card:hover .media video{transform:scale(1.08)}
+    .content{padding:18px;background:linear-gradient(135deg,rgba(11,8,24,.96),rgba(44,29,19,.32));display:flex;flex-direction:column;justify-content:center}
+    .tag{display:inline-block;width:max-content;padding:7px 10px;border-radius:999px;background:rgba(216,176,108,.12);color:var(--gold2);font-size:12px;font-weight:900;margin-bottom:10px;border:1px solid rgba(216,176,108,.18)}
+    .content h3{font-size:23px;margin-bottom:4px}.city{color:var(--muted);font-size:14px;margin-bottom:12px}.quote{color:var(--muted);line-height:1.52}
+    .hint{display:block;color:var(--gold2);margin-top:14px;font-weight:900;font-size:13px}.videoBadge{display:inline-block;width:max-content;margin-top:10px;padding:7px 10px;border-radius:999px;background:rgba(216,176,108,.12);border:1px solid rgba(216,176,108,.25);color:var(--gold2);font-size:12px;font-weight:900}.videoLink{margin-top:16px}
+    .trust{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.trust .glass{padding:20px}.trust h3{margin-bottom:8px}.trust p{color:var(--muted);line-height:1.5}
+    .cta{text-align:center;padding:55px 20px;margin:45px 0}.cta p{max-width:640px;margin:14px auto 24px;color:var(--muted);line-height:1.6}
+    .ctaActions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.76);display:none;align-items:center;justify-content:center;padding:18px;z-index:99}.modal.show{display:flex}
+    .box{width:min(980px,100%);max-height:92vh;overflow:auto;border-radius:30px;background:#0b0818;border:1px solid var(--line);display:grid;grid-template-columns:.9fr 1.1fr;position:relative}
+    .close{position:absolute;right:12px;top:12px;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:#000;color:#fff;font-size:24px;cursor:pointer;z-index:2}
+    .modalMedia{min-height:520px;background:#120d22;display:grid;place-items:center}.modalMedia img,.modalMedia video{width:100%;height:100%;object-fit:cover}.modalText{padding:30px}.modalText h3{font-size:38px;margin:8px 0}.point{padding:12px;border:1px solid var(--line);border-radius:16px;margin-top:10px;color:var(--muted);line-height:1.5}.point b{color:var(--text)}.full{white-space:pre-line;color:var(--text);line-height:1.7;background:rgba(216,176,108,.07);border:1px solid rgba(216,176,108,.22);border-radius:20px;padding:18px;margin-top:18px}
+    @keyframes heroReveal{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}@keyframes photoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-18px) scale(1.025)}}@keyframes glassShine{0%,55%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}@keyframes cardIn{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes miniFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}@keyframes orbMove{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(18px,-22px,0) scale(1.08)}}
+    @media(max-width:900px){.hero,.box{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.trust{grid-template-columns:1fr 1fr}.modalMedia{min-height:340px}.heroMain{min-height:640px}.heroBgPhoto{inset:8% 0 0 24%;opacity:.22}}
+    @media(max-width:620px){.nav{align-items:flex-start;flex-direction:column}.hero{padding-top:45px}.grid,.trust{grid-template-columns:1fr}.card{grid-template-columns:1fr 1fr;min-height:230px}.media{min-height:230px}h1{font-size:44px}.btn{width:100%}.modalText{padding:22px}.modalText h3{font-size:30px}.heroMain{min-height:560px;padding-top:18px}.heroBgPhoto{inset:18% -8% 0 18%;opacity:.16}.ctaActions{flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<div class="orb one"></div><div class="orb two"></div>
+<nav class="nav"><div class="brand">ОТЗЫВЫ МОИХ КЛИЕНТОВ</div><a class="btn" href="https://t.me/m/6QxXgmE_NThi">Консультация</a></nav>
+<header class="wrap hero">
+  <div class="heroMain"><div class="heroBgPhoto"><img src="https://i.postimg.cc/0yT9rbTw/IMG-5940.png" alt="Елена — эксперт по недвижимости"></div><h1>Истории людей, которые уже сделали сильный выбор</h1><p class="lead">Реальные отзывы, кейсы и результаты: переезд, инвестиции и сделки без хаоса.</p><p style="margin-top:24px"><a class="btn" href="#cases">Посмотреть отзывы</a></p></div>
+  <div class="glass phone"><div class="mini"><b>Мария, Оренбург</b><p>«Процесс прошёл абсолютно без головной боли, в удовольствие и в очень быстрые сроки...»</p></div><div class="mini"><b>Анастасия</b><p>«С Еленой мы приобрели две замечательные квартиры, дистанционно, и это было полное сопровождение...»</p></div><div class="mini"><b>Илья</b><p>«Елена помогла увидеть в недвижимости не просто квартиру, а сильное инвестиционное решение...»</p></div></div>
+</header>
+<main>
+<section class="wrap section" id="cases"><h2>Отзывы, которые работают как кейсы</h2><p class="sub">Откройте карточку, чтобы прочитать полный текст отзыва.</p><div class="filters"><button class="filter active" data-filter="all">Все</button><button class="filter" data-filter="Переезд">Переезд</button><button class="filter" data-filter="Инвестиции">Инвестиции</button></div><div class="grid" id="grid"></div></section>
+<section class="wrap section"><h2>Почему мне доверяют</h2><div class="trust"><div class="glass"><h3>Структура</h3><p>Клиент понимает шаги сделки и чувствует ясность.</p></div><div class="glass"><h3>Скорость</h3><p>Быстрый подбор и оперативная связь.</p></div><div class="glass"><h3>Поддержка</h3><p>Сопровождение даже в сложных ситуациях.</p></div><div class="glass"><h3>Результат</h3><p>Покупка квартиры как переход к новому качеству жизни.</p></div></div></section>
+<section class="wrap section" id="add"><div class="glass cta"><h2>Хотите оставить отзыв?</h2><p>Напишите мне в Telegram, прикрепите текст, фото или видео — я аккуратно добавлю ваш отзыв в этот раздел после модерации.</p><a class="btn" href="https://t.me/elena_gumen_grup/102" target="_blank" rel="noopener">Оставить отзыв</a></div></section>
+<section class="wrap"><div class="glass cta"><h2>Хотите купить недвижимость без стресса?</h2><p>Я разберу ваш объект, покажу риски и помогу понять, стоит ли идти в сделку.</p><div class="ctaActions"><a class="btn" href="https://t.me/m/6QxXgmE_NThi">Записаться на консультацию</a><a class="btn" href="https://t.me/elena_gumen_grup/102" target="_blank" rel="noopener">Посмотреть больше отзывов</a></div></div></section>
+</main>
+<div class="modal" id="modal"><div class="box"><button class="close" id="close">×</button><div class="modalMedia" id="modalMedia"></div><div class="modalText"><span class="tag" id="mCat"></span><h3 id="mName"></h3><div class="city" id="mCity"></div><p class="quote" id="mQuote"></p><div class="point"><b>Проблема:</b> <span id="mProblem"></span></div><div class="point"><b>Решение:</b> <span id="mSolution"></span></div><div class="point"><b>Результат:</b> <span id="mResult"></span></div><div class="full" id="mFull"></div><div id="mVideo"></div><p style="margin-top:18px"><a class="btn" href="https://t.me/m/6QxXgmE_NThi">Хочу похожий результат</a></p></div></div></div>
+<script>
+'use strict';
+const defaultCases = [
+  {name:'Мария',city:'Оренбург',cat:'Переезд',img:'https://i.postimg.cc/T1Mb9dLF/photo-2026-05-02-23-47-27.jpg',mediaType:'image',quote:'Процесс прошёл абсолютно без головной боли, в удовольствие и в очень быстрые сроки.',problem:'Нужно было найти жильё без хаоса, затягивания сроков и неопределённости.',solution:'Быстро подобрали варианты, выстроили структурный процесс и сопровождали клиента.',result:'Клиентка нашла Елену через YouTube, решилась написать и осталась довольна скоростью, ясностью и организацией.',full:`Спасибо большое вам и вашей команде!
+Процесс прошел абсолютно без головной боли, в удовольствие, в очень быстрые сроки. Мне очень понравилась структурность работы и организованность. Уже с момента предоставления вариантов на выбор я чувствовала комфорт и ясность.
+Очень рада, что нашла вас на ютубе и решилась написать 😊`},
+  {name:'Наталья',city:'Сыктывкар',cat:'Переезд',img:'https://i.postimg.cc/jjg30c5K/photo-2026-05-02-11-57-21.jpg',mediaType:'image',quote:'Спасибо за индивидуальный подход, скорость в поиске жилья и оперативность быть на связи.',problem:'Сложный договор, долгий путь поиска и необходимость быть на связи несколько месяцев.',solution:'Индивидуальный подход, быстрый поиск жилья, поддержка и оперативная коммуникация.',result:'Жильё нашли за 2–3 дня, а клиентка чувствовала поддержку 3,5 месяца.',full:`Спасибо Вам за Вашу помощь в поиске жилья! За индивидуальный подход к каждому клиенту который к Вам обращается! За Вашу скорость в поиске жилья (если меня не подводит память, то жилье вы нашли в течении 2-3 дней)! За Вашу оперативность быть на связи (даже поздно вечером, когда рабочее время окончено, и вы уже в кругу своей семьи), но даже это Вас не останавливает всем ответить!
+Благодарю Вас за то, что все 3.5 месяца были со мной на связи, верили и поддерживали меня в таком сложном договоре (мы с вами прошли 9 кругов Ада😂).
+Вы одна из лучших риэлторов в нашем городе! Хотелось бы пожелать Вам побольше клиентов, терпения и конечно благодарных сделок!`},
+  {name:'Михаил Пастушенко',city:'Лаго-Наки',cat:'Переезд',img:'https://i.postimg.cc/9QwdLLN4/photo-2026-05-03-20-39-49.jpg',mediaType:'image',quote:'Елена, спасибо за Ваши советы! Мы оформили семейную ипотеку на квартиру мечты в предгорье Лаго-Наки.',problem:'Многодетная семья, страх упустить возможность и сложность с ипотекой.',solution:'Консультация, сопровождение и помощь в принятии решения.',result:'Оформили семейную ипотеку и начали новый этап жизни с пятью детьми.',full:`Елена, спасибо за Ваши советы! Мы с Вашей помощью воспользовались шансом и вчера оформили семейную ипотеку на покупку квартиры мечты в предгорье Лаго-Наки! Начинается новый этап в жизни многодетной семьи с пятью детьми! Всё о чем рассказывает Елена работает на все сто процентов. Всем хорошего дня! Михаил Пастушенко.`},
+  {name:'Ольга',city:'',cat:'Переезд',img:'https://i.postimg.cc/6TxsyYwv/photo-2026-05-02-20-02-31.jpg',mediaType:'image',quote:'Увидев твой ролик и написав тебе, я сейчас осознаю, что не ошиблась в тебе.',problem:'Неуверенность в выборе специалиста.',solution:'Обращение после ролика и личная коммуникация.',result:'Уверенность в выборе и доверие специалисту.',full:`Одна из этих клиенток — Я... 😊
+Леночка, ты моя звезда, увидев твой ролик и написав тебя, я сейчас осознаю, что не ошиблась в тебе...
+Благодарю и до встречи ❤️`},
+  {name:'Ксения',city:'',cat:'Переезд',img:'https://i.postimg.cc/pT8vHq9n/photo-2026-05-02-23-26-19.jpg',mediaType:'image',quote:'Легко и быстро нашли для себя лучший вариант, сопровождала нас с самого начала до выдачи ключей.',problem:'Нужно было подобрать квартиру и пройти путь сделки без лишней тревоги.',solution:'Елена помогла с подбором, сопровождала с самого начала и была рядом до выдачи ключей.',result:'Клиенты нашли лучший вариант, получили ключи и остались довольны заботой и сопровождением.',full:`Хотим поделиться своим отзывом.
+Обращались за подбором квартиры, нам помогала Елена. Замечательный человек и отличный специалист! Легко и быстро нашли для себя лучший вариант, сопровождала нас с самого начала до выдачи ключей.
+
+Отдельное спасибо за лотерею от застройщика. Сами бы не узнали и не пошли участвовать, если бы не Елена. А так еще выиграли мультиварку в квартиру)
+
+Было легко и приятно во всех моментах, советуем обращаться, и сами тоже придем еще раз, когда будем выбирать следующую недвижимость. Огромное спасибо, за ваши старания и заботу!`},
+  {name:'Ксения',city:'',cat:'Переезд',img:'https://i.postimg.cc/ncFJyV0Z/photo-2026-05-02-20-56-17.jpg',mediaType:'image',quote:'Огромная благодарность за труд, помощь в поиске жилья, индивидуальный подход и скорость.',problem:'Нужна была помощь в поиске жилья и поддержка в сложном процессе.',solution:'Индивидуальный подход, быстрый поиск жилья, постоянная связь и поддержка.',result:'Клиентка получила помощь, оперативность и ощущение, что специалист рядом даже вне рабочего времени.',full:`Леночка, моя дорогая! Я хочу выразить Вам огромную благодарность за ваш труд и Вашу помощь в поиске жилья! За индивидуальный подход к каждому клиенту который к Вам обращается! За Вашу скорость в поиске жилья (если меня не подводит память, то жилье вы нашли в течении 2-3 дней)! За Вашу оперативность быть на связи (даже поздно вечером, когда рабочее время окончено, и вы уже в кругу своей семьи), но даже это Вас не останавливает всем ответить!
+Благодарю Вас за то, что все 3.5 месяца были со мной на связи, верили и поддерживали меня в таком сложном договоре (мы с вами прошли 9 кругов Ада😂).
+Вы одна из лучших риэлторов в нашем городе! Хотелось бы пожелать Вам побольше клиентов, терпения и конечно же побольше закрытых сделок!`},
+  {name:'Дарья',city:'',cat:'Переезд',img:'https://i.postimg.cc/xCHQ2tXh/photo-2026-05-02-23-26-11.jpg',mediaType:'image',quote:'Мы сегодня счастливые, получили ключи от нашей квартиры. Благодарю Вас и Вашу команду за эти эмоции.',problem:'Нужно было выбрать квартиру, которая будет радовать не только на сделке, но и после ремонта.',solution:'Подбор квартиры с учётом этажа, вида из окна, планировки и комфортного сценария жизни.',result:'Клиенты получили ключи, сделали аккуратный ремонт за месяц и остались в восторге от 23 этажа и панорамных окон.',full:`Елена, добрый вечер❤️ Мы сегодня счастливые, получили ключи от нашей квартиры 🥳
+Так быстро сделали ремонт за один месяц, и такой аккуратный, никаких претензий, а какой вид из окна😍
+Я так рада, что мы выбрали 23 этаж и панорамные окна — это восхитительное зрелище😍❤️
+От всей души Благодарю Вас и Вашу команду за эти эмоции, которые мы сейчас испытываем, это бесценный подарок который мы сделали себе с Вашим огромным участием❤️🫶`},
+  {name:'Вероника',city:'',cat:'Переезд',img:'https://i.postimg.cc/x1Nv66FX/photo-2026-05-03-20-44-17.jpg',mediaType:'image',videoLink:'https://rutube.ru/video/private/5be4553b7eee9a13dfd01591d22ff519/?p=GhAJ9RcJe99IG89OVVnh5A',quote:'Очень благодарна Елене за её труд. Таких профессионалов очень мало. Низкий поклон от всей нашей семьи.',problem:'Нужен был специалист, которому можно доверить важный семейный вопрос и пройти путь покупки спокойно.',solution:'Елена сопровождала процесс профессионально, внимательно и с большой вовлечённостью.',result:'Семья осталась благодарна за труд, поддержку и профессионализм.',full:`Елена, хочу выразить огромную благодарность за ваш труд, внимание и профессионализм.
+Таких специалистов действительно очень мало. Вы не просто помогаете с недвижимостью — вы поддерживаете, ведёте и даёте ощущение, что рядом человек, которому можно доверять.
+Низкий поклон от всей нашей семьи.`},
+  {name:'Анастасия',city:'Север',cat:'Инвестиции',img:'https://i.postimg.cc/rmWTkQdD/photo-2026-05-02-23-26-24.jpg',mediaType:'image',quote:'С Еленой мы приобрели две замечательные квартиры дистанционно, и это было полное сопровождение с невероятной самоотдачей.',problem:'Покупка двух квартир дистанционно: разница в часовых поясах, нестабильная связь, отсутствие отделений банков и сложная логистика.',solution:'Елена сопровождала процесс полностью, поддерживала, помогала с документами, коммуникацией, сдачей в аренду и ремонтом.',result:'Клиентка приобрела две квартиры, три года остаётся на связи с Еленой и рекомендует покупать недвижимость только с ней.',full:`Жаль, что в массах существует укоренившийся стереотип, что риэлторы — это люди, которые «втюхивают» не продаваемые объекты, работают ради денег и тп.
+С Еленой мы приобрели две замечательные квартиры, дистанционно, и что важно, при покупке первой квартиры, когда было 100500 сложностей не зависящих от нее, она не сдавалась.
+Человек, с невероятной самоотдачей, солнечный и радушный. В нашем городе, за полярным кругом, за 6500 км., с редким явлениями, такими как связь и интернет, с разницей в часовых поясах, с отсутствием отделений банков и приезжающим раз в три месяца нотариусом, когда другие бы уже сдались, она продолжала с позитивом и колоссальным терпением поддерживать нас, таких терпеливых людей я не встречала, честно. Обе сделки прошли дистанционно, с полным сопровождением и даже больше.
+Решение о второй квартире было принято спонтанно спустя год, в одной руке с телефоном, а в другой с какао и печеньками, под Гарри Поттера) просто смс ей «есть ли что то интересное на рынке недвижимости?», и уже не следующий день она готовила документы, а в мае я забирала заветные ключики💔
+Я никогда не слышала ее уставшей, и Боже упаси грубой, максимальная доброжелательность. С Еленой мы уже три года, она до сих пор ведет дела с квартирами во всех направлениях, до мельчайших деталей (сервисные компании, документы, подписи, сдача в аренду, ремонт) и всегда спешит на помощь. Она мой спасательный круг.
+Если покупать недвижимость, то только с ней!`},
+  {name:'Ирина',city:'',cat:'Инвестиции',img:'https://i.postimg.cc/qv6s11Zz/photo-2026-05-03-20-44-22.jpg',mediaType:'image',videoLink:'https://rutube.ru/video/private/e780b7e608234c7e5db9abec43446596/?p=ee2jN34W6V_QfkXtv5EbUw',quote:'Благодарна Елене за профессионализм. Всё чётко, спокойно и по делу.',problem:'Хотелось пройти инвестиционную сделку с сильным специалистом и быть уверенной в каждом шаге.',solution:'Елена вела процесс профессионально, уверенно и с полным пониманием задачи клиента.',result:'Ирина получила спокойствие, ясность и уверенность в принятом инвестиционном решении.',full:`Очень благодарна Елене за профессионализм.
+Всё было чётко, спокойно и по делу.
+Таких специалистов ценят с первого общения.
+Когда нужен результат — нужен именно такой подход.`},
+  {name:'Екатерина',city:'Новосибирск',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'С Еленой инвестиции — это не угадайка, а чёткая стратегия.',problem:'Хотелось вложить деньги в недвижимость без риска купить красивую, но слабую историю.',solution:'Елена помогла оценить ликвидность, район, перспективу роста и реальный спрос.',result:'Сделка была спокойной и понятной, а выбор — осознанным и сильным.',full:`Очень благодарна Елене за профессиональный подход к инвестициям. Всё было не на эмоциях, а на цифрах, логике и перспективе. Сразу чувствуется, когда рядом человек, который не продаёт, а действительно помогает принять сильное решение.`},
+  {name:'Артём',city:'Екатеринбург',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'Елена показала мне не квартиру, а инвестиционную возможность.',problem:'Было много вариантов, но не было понимания, какой объект реально сработает как инвестиция.',solution:'Сравнили объекты по цене входа, перспективе роста, аренде и будущей перепродаже.',result:'Выбрал объект уверенно, потому что понял его логику и потенциал.',full:`С Еленой стало понятно главное: инвестиционная недвижимость — это не «понравилось / не понравилось», а стратегия. Благодарен за чёткость, спокойствие и умение объяснить всё простым языком. Именно так и должен работать сильный эксперт.`},
+  {name:'Светлана',city:'Тюмень',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'Редкий специалист, который думает не о продаже, а о выгоде клиента.',problem:'Нужна была инвестиция с понятным будущим, а не просто красивая новостройка.',solution:'Елена помогла увидеть, где действительно есть рост, спрос и ликвидность.',result:'Появилось чувство, что деньги вложены не случайно, а грамотно.',full:`Благодарна Елене за честность и профессионализм. Очень ценно, когда специалист смотрит на объект глазами инвестора, а не продавца. Всё по делу, с аргументами и пониманием, как недвижимость будет работать дальше.`},
+  {name:'Павел',city:'Хабаровск',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'Елена умеет превращать сложный выбор в ясное решение.',problem:'Хотел инвестировать дистанционно, но опасался ошибок и непрозрачности процесса.',solution:'Получил сопровождение, разбор объекта и понятную схему действий на каждом этапе.',result:'Удалось зайти в сделку уверенно, без хаоса и постоянных сомнений.',full:`Для меня было важно, чтобы инвестиционная покупка прошла спокойно и прозрачно. С Еленой именно так и получилось. Она даёт не только объект, но и ощущение надёжности — а это в инвестициях бесценно.`},
+  {name:'Юлия',city:'Москва',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'Когда нужен результат, нужен именно такой уровень профессионализма.',problem:'Хотелось вложиться в недвижимость с умом и без ощущения, что меня ведут вслепую.',solution:'Елена показала реальные плюсы и риски, помогла выбрать сильный вариант.',result:'Инвестиция стала понятной, спокойной и по-настоящему уверенной.',full:`Очень благодарна Елене за профессионализм и уверенность, которую она даёт в процессе. Всё структурно, чётко и без лишнего шума. Именно такой подход вызывает доверие и желание рекомендовать специалиста дальше.`},
+  {name:'Илья',city:'',cat:'Инвестиции',img:'https://i.postimg.cc/pT8vHq9h/photo-2026-05-02-23-26-27.jpg',mediaType:'image',videoLink:'https://rutube.ru/video/private/c2c668670f4579379913b312b1530134/?p=wNtNAKX0cpS57Jo-gaSiTA',quote:'Елена помогла увидеть в недвижимости не просто квартиру, а сильное инвестиционное решение.',problem:'Хотелось вложиться грамотно, без хаоса, сомнений и риска выбрать объект только на эмоциях.',solution:'Елена разобрала варианты, показала логику выбора, риски, перспективу роста и сценарий дальнейшего использования объекта.',result:'Илья принял решение спокойно и уверенно, потому что понимал не только объект, но и стратегию.',full:`Хочу поблагодарить Елену за профессионализм, спокойствие и очень точный подход.
+С ней недвижимость перестаёт быть хаотичным выбором и становится понятным инвестиционным решением.
+Всё было по делу: разбор вариантов, рисков, перспектив и дальнейшей стратегии.
+Очень ценно, когда рядом специалист, который думает не о быстрой продаже, а о результате клиента.`},
+  {name:'Игорь',city:'Краснодар',cat:'Инвестиции',img:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',mediaType:'image',quote:'Мне показали не объект, а стратегию: где рост, кому сдавать или продавать.',problem:'Не понимал, какой объект будет ликвиден после сдачи.',solution:'Сравнили цену входа, район, конкуренцию и спрос.',result:'Выбрали объект с понятной инвестиционной логикой.',full:`Главное — мне показали не объект, а стратегию: где рост, кому потом сдавать или продавать, где риск переплаты.`}
+];
+const grid=document.getElementById('grid');
+const modal=document.getElementById('modal');
+let currentFilter='all';
+function esc(v){return String(v||'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]))}
+function mediaHTML(item,controls=false){if(!item.img)return '<span style="font-size:58px;color:#d8b06c">✦</span>';return item.mediaType==='video'?`<video src="${esc(item.img)}" ${controls?'controls':''} muted playsinline></video>`:`<img src="${esc(item.img)}" alt="${esc(item.name)}">`}
+function render(){const list=defaultCases.filter(i=>currentFilter==='all'||i.cat===currentFilter);grid.innerHTML=list.map(item=>`<article class="card" data-id="${defaultCases.indexOf(item)}"><div class="media">${mediaHTML(item)}</div><div class="content"><span class="tag">${esc(item.cat)}</span><h3>${esc(item.name)}</h3><div class="city">${esc(item.city||'Клиент')}</div><p class="quote">${esc(item.quote)}</p>${item.videoLink?'<span class="videoBadge">Есть видеоотзыв</span>':''}<span class="hint">Прочитать полностью →</span></div></article>`).join('');document.querySelectorAll('.card').forEach(card=>card.addEventListener('click',()=>openCase(Number(card.dataset.id))))}
+function openCase(id){const item=defaultCases[id];if(!item)return;document.getElementById('mCat').textContent=item.cat;document.getElementById('mName').textContent=item.name;document.getElementById('mCity').textContent=item.city||'Клиент';document.getElementById('mQuote').textContent='“'+item.quote+'”';document.getElementById('mProblem').textContent=item.problem||'Не указано';document.getElementById('mSolution').textContent=item.solution||'Индивидуальное сопровождение на всех этапах.';document.getElementById('mResult').textContent=item.result||'Клиент получил ясность и результат.';document.getElementById('mFull').textContent=item.full||item.quote;document.getElementById('modalMedia').innerHTML=mediaHTML(item,true);document.getElementById('mVideo').innerHTML=item.videoLink?`<p class="videoLink"><a class="btn" href="${esc(item.videoLink)}" target="_self">Открыть видеоотзыв в Rutube</a></p><p style="margin-top:10px;color:var(--muted);font-size:13px;line-height:1.45">Если предпросмотр не даёт открыть Rutube, скопируйте ссылку вручную:<br><a href="${esc(item.videoLink)}" target="_self" style="color:var(--gold2);word-break:break-all">${esc(item.videoLink)}</a></p>`:'';modal.classList.add('show')}
+document.getElementById('close').addEventListener('click',()=>modal.classList.remove('show'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=btn.dataset.filter;render()}));
+render();
+</script>
+</body>
+</html>
